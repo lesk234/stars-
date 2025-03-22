@@ -1,0 +1,137 @@
+<!DOCTYPE html>z
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Казино со звездами</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .menu button {
+            padding: 15px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .back-button {
+            margin-top: 20px;
+            background-color: #dc3545;
+        }
+        .game, .deposit, .profile, .support, .withdraw {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu" id="mainMenu">
+        <button onclick="showSection('game')">Игра</button>
+        <button onclick="showSection('deposit')">Пополнение</button>
+        <button onclick="showSection('withdraw')">Вывод</button>
+        <button onclick="showSection('support')">Поддержка</button>
+        <button onclick="showSection('profile')">Профиль</button>
+    </div>
+
+    <!-- Раздел Игра -->
+    <div class="game" id="gameSection">
+        <h2>Игра</h2>
+        <button onclick="showGame('starGame')">Звезда с коэффициентами</button>
+        <button onclick="showGame('game2')">Игра 2</button>
+        <button onclick="showGame('game3')">Игра 3</button>
+        <button onclick="showGame('game4')">Игра 4</button>
+        <button onclick="showGame('game5')">Игра 5</button>
+        <button class="back-button" onclick="showSection('mainMenu')">Назад</button>
+    </div>
+
+    <!-- Раздел Пополнение -->
+    <div class="deposit" id="depositSection">
+        <h2>Пополнение</h2>
+        <button onclick="showDepositMethod('sbp')">СБП</button>
+        <button onclick="showDepositMethod('lolzteam')">Lolzteam</button>
+        <button onclick="showDepositMethod('crypto')">Crypto Bot</button>
+        <button class="back-button" onclick="showSection('mainMenu')">Назад</button>
+    </div>
+
+    <!-- Раздел Профиль -->
+    <div class="profile" id="profileSection">
+        <h2>Профиль</h2>
+        <p>Баланс: <span id="balance">0</span> звезд</p>
+        <h3>История транзакций:</h3>
+        <ul id="transactionHistory"></ul>
+        <button class="back-button" onclick="showSection('mainMenu')">Назад</button>
+    </div>
+
+    <!-- Раздел Поддержка -->
+    <div class="support" id="supportSection">
+        <h2>Поддержка</h2>
+        <p>Свяжитесь с нами: @onlyluxuri</p>
+        <button class="back-button" onclick="showSection('mainMenu')">Назад</button>
+    </div>
+
+    <!-- Раздел Вывод -->
+    <div class="withdraw" id="withdrawSection">
+        <h2>Вывод</h2>
+        <p>Раздел в разработке.</p>
+        <button class="back-button" onclick="showSection('mainMenu')">Назад</button>
+    </div>
+
+    <script>
+        // Инициализация Web App
+        Telegram.WebApp.ready();
+
+        // Получаем данные от бота
+        const initData = Telegram.WebApp.initData;
+        const user = JSON.parse(initData).user;
+
+        // Загружаем баланс и историю транзакций
+        function loadProfile() {
+            fetch(`/get_profile?user_id=${user.id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('balance').textContent = data.balance;
+                    const historyList = document.getElementById('transactionHistory');
+                    historyList.innerHTML = data.transaction_history.map(t => `<li>${t}</li>`).join('');
+                });
+        }
+
+        // Показываем раздел
+        function showSection(section) {
+            document.querySelectorAll('div').forEach(div => div.style.display = 'none');
+            document.getElementById(`${section}Section`).style.display = 'block';
+            if (section === 'profile') loadProfile();
+        }
+
+        // Показываем игру
+        function showGame(game) {
+            alert(`Запуск игры: ${game}`);
+            // Здесь можно добавить логику для каждой игры
+        }
+
+        // Показываем метод пополнения
+        function showDepositMethod(method) {
+            let url;
+            if (method === 'sbp') {
+                url = "https://your-sbp-link.com";
+            } else if (method === 'lolzteam') {
+                url = "https://lolz.live/payment/balance-transfer?user_id=9101557&hold=1&from_card=1&_noRedirect=1";
+            } else if (method === 'crypto') {
+                url = "https://your-crypto-bot-link.com";
+            }
+            window.open(url, '_blank');
+        }
+
+        // Показываем главное меню при загрузке
+        showSection('mainMenu');
+    </script>
+</body>
+</html>
